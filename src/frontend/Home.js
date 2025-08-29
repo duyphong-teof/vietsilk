@@ -8,12 +8,14 @@ const VietSilkApp = () => {
   const [email, setEmail] = useState('');
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [ setImgIndexes] = useState({});
+  const [setImgIndexes] = useState({});
 
   const fetchProducts = async (gioiTinh) => {
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:5000/api/products?gioiTinh=${gioiTinh}`);
+     const API_URL = process.env.REACT_APP_API_URL;
+      console.log('Fetching products from:', `${API_URL}/api/products?gioiTinh=${gioiTinh}`);
+    const response = await fetch(`${API_URL}/api/products?gioiTinh=${gioiTinh}`);
       const data = await response.json();
       setProducts(data);
       const initialIndexes = {};
@@ -50,23 +52,6 @@ const VietSilkApp = () => {
       return hinhAnh.split(',').map((img) => img.trim());
     }
     return [];
-  };
-
-  const changeImageIndex = (productId, direction) => {
-    setImgIndexes((prev) => {
-      const product = products.find((p) => p._id === productId);
-      const images = getImagesArray(product.hinhAnh);
-      if (images.length === 0) return prev;
-
-      let newIndex = prev[productId] ?? 0;
-      if (direction === 'next') {
-        newIndex = (newIndex + 1) % images.length;
-      } else if (direction === 'prev') {
-        newIndex = (newIndex - 1 + images.length) % images.length;
-      }
-
-      return { ...prev, [productId]: newIndex };
-    });
   };
 
   return (
